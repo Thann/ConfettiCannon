@@ -2,13 +2,17 @@
   <head>
     <script src="./bundle.js"></script>
   </head>
-  <body>
-    <canvas></canvas>
-    <div style="position: absolute; top: 0;">
-      Click to launch confetti!
+  <body style="margin: 0;">
+    <div style="z-index: 2; position: absolute;"> &nbsp;
+      Drag to launch confetti!
+      <a href="https://github.com/Thann/ConfettiCannon">github</a>
     </div>
+    <canvas style="position: absolute; top: 0;"></canvas>
   </body>
   <script>
-    var confetti = new ConfettiCannon(document.querySelector('canvas'));
+    window.confetti = new ConfettiCannon(document.querySelector('canvas'), false, true);
+    window.blast = function(particles, angle, velocity, x0, y0) {
+      window.confetti.addConfettiParticles(particles, angle, velocity, x0, y0);
+    }
   </script>
 </html>
