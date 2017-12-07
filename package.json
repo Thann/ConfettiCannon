@@ -1,0 +1,20 @@
+{
+  "name": "ConfettiCannon",
+  "version": "0.0.1",
+  "description": "Confetti Cannon stolen from https://codepen.io/jscottsmith/pen/VjPaLO",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Thann/ConfettiCannon.git"
+  },
+  "bin": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "gsap": "^1.20.3",
+    "lodash": "^4.17.4",
+    "webpack": "^3.10.0"
+  },
+  "devDependencies": {}
+}
