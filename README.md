@@ -5,8 +5,8 @@ Requires [Physics2DPlugin](https://greensock.com/physics2d-as),
 a Club GreenSock membership benefit; You must have a valid membership to use
 
 ## Usage
-`const confetti = ConfettiCannon($('canvas'), manualTriggerOnly)`
+`const confetti = ConfettiCannon($('canvas'), {options...})`
 
-`confetti.addConfettiParticles(amount, angle, velocity, x, y)`
+`confetti.fire({amount, angle, velocity, x, y, color, options...})`
 
 `$(window).resize(function() { confetti.setCanvasSize(); })`

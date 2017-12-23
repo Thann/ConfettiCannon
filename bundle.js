@@ -116,16 +116,28 @@ function getDegAngle(x0, y0, x1, y1) {
 	return Math.atan2(y, x) * (180 / Math.PI);
 }
 
-// some constants
-const DECAY = 4;        // confetti decay in seconds
-const SPREAD = 60;      // degrees to spread from the angle of the cannon
-const GRAVITY = 1200;
-
 class ConfettiCannon {
-	constructor(canvas, manualTrigger, setCanvasSize) {
-		if (!canvas) throw "must pass canvas"
-		// setup a canvas
+	constructor(canvas, options) {
+		if (canvas.length) canvas = canvas[0];
+		if (!canvas) throw "must pass canvas";
 		this.canvas = canvas;
+
+		this.options = _.extend({
+			debug: false,
+			trigger: this.canvas,
+			forceCanvasSize: false,
+			// default fire options
+			decay: 4,
+			spread: 60,
+			gravity: 1200,
+			color: {
+				red: [0, 255],
+				blue: [0, 255],
+				green: [0, 255],
+			},
+		}, options);
+
+		// setup canvas
 		this.dpr = window.devicePixelRatio || 1;
 		this.ctx = this.canvas.getContext('2d');
 		this.ctx.scale(this.dpr, this.dpr);
@@ -158,28 +170,28 @@ class ConfettiCannon {
 		// Use TweenLite tick event for the render loop
 		TweenLite.ticker.addEventListener('tick', this.render);
 
-		if (!manualTrigger)
-			this.setupListeners();
-		if (setCanvasSize)
-			this.setCanvasSize();
+		this.setCanvasSize();
+		if (this.options.trigger) this.setupListeners(this.options.trigger);
 	}
 
-	setupListeners() {
+	setupListeners(target) {
 		// bind events
-		this.canvas.addEventListener('mousedown', this.handleMousedown);
-		this.canvas.addEventListener('mouseup', this.handleMouseup);
-		this.canvas.addEventListener('mousemove', this.handleMousemove);
-		this.canvas.addEventListener('touchstart', this.handleTouchstart);
-		this.canvas.addEventListener('touchend', this.handleMouseup);
-		this.canvas.addEventListener('touchmove', this.handleTouchmove);
-		this.canvas.addEventListener('resize', this.setCanvasSize);
+		target.addEventListener('mousedown', this.handleMousedown);
+		target.addEventListener('mouseup', this.handleMouseup);
+		target.addEventListener('mousemove', this.handleMousemove);
+		target.addEventListener('touchstart', this.handleTouchstart);
+		target.addEventListener('touchend', this.handleMouseup);
+		target.addEventListener('touchmove', this.handleTouchmove);
+		target.addEventListener('resize', this.setCanvasSize);
 	}
 
 	setCanvasSize() {
 		this.canvas.width = window.innerWidth * this.dpr;
 		this.canvas.height = window.innerHeight * this.dpr;
-		this.canvas.style.width = window.innerWidth + 'px';
-		this.canvas.style.height = window.innerHeight + 'px';
+		if (!this.options.forceCanvasSize) {
+			this.canvas.style.width = window.innerWidth + 'px';
+			this.canvas.style.height = window.innerHeight + 'px';
+		}
 	}
 
 	handleMousedown(event) {
@@ -218,9 +230,9 @@ class ConfettiCannon {
 		const length = getLength(x0, y0, x1, y1);
 		const angle = getDegAngle(x0, y0, x1, y1) + 180;
 
-		const particles = length / 5 + 5;
+		const amount = length / 5 + 5;
 		const velocity = length * 10;
-		this.addConfettiParticles(particles, angle, velocity, x0, y0);
+		this.addConfettiParticles({amount, angle, velocity, x: x0, y: y0});
 	}
 
 	handleMousemove(event) {
@@ -259,17 +271,32 @@ class ConfettiCannon {
 		this.ctx.stroke();
 	}
 
-	addConfettiParticles(amount, angle, velocity, x, y) {
+	// color should be {red: [0,255], green: [0,255], blue: [0,255]} or a fn that returns one
+	addConfettiParticles(options) {
+		options = _.extend({
+			angle: 270,
+			amount: 100,
+			velocity: 2000,
+			x: this.canvas.width/2,
+			y: this.canvas.height/2,
+			color: this.options.color,
+			decay: this.options.decay,
+			spread: this.options.spread,
+			gravity: this.options.gravity,
+		}, options);
+
 		let i = 0;
-		while (i < amount) {
+		while (i < options.amount) {
 			// sprite
 			const r = _.random(4, 6) * this.dpr;
 			const d = _.random(15, 25) * this.dpr;
 
-			const cr = _.random(30, 255);
-			const cg = _.random(30, 230);
-			const cb = _.random(30, 230);
-			const color = `rgb(${cr}, ${cg}, ${cb})`;
+			if (this.options.debug) console.log("Adding Particle:", i, options);
+			let color = _.isFunction(options.color)? options.color.apply() : options.color;
+			const cr = _.isArray(color.red)? _.random(...color.red) : color.red;
+			const cb = _.isArray(color.blue)? _.random(...color.blue) : color.blue;
+			const cg = _.isArray(color.green)? _.random(...color.green) : color.green;
+			color = `rgb(${cr}, ${cg}, ${cb})`;
 
 			const tilt = _.random(10, -10);
 			const tiltAngleIncremental = _.random(0.07, 0.05);
@@ -278,29 +305,33 @@ class ConfettiCannon {
 			const id = _.uniqueId();
 			const sprite = {
 				[id]: {
-					angle,
-					velocity,
-					x,
-					y,
 					r,
 					d,
-					color,
 					tilt,
-					tiltAngleIncremental,
+					color,
 					tiltAngle,
+					tiltAngleIncremental,
+					x: options.x,
+					y: options.y,
+					angle: options.angle,
+					velocity: options.velocity,
 				},
 			};
 
 			Object.assign(this.confettiSprites, sprite);
 			this.confettiSpriteIds.push(id);
-			this.tweenConfettiParticle(id);
+			this.tweenConfettiParticle(id, options);
 			i++;
 		}
 	}
 
-	tweenConfettiParticle(id) {
-		const minAngle = this.confettiSprites[id].angle - SPREAD / 2;
-		const maxAngle = this.confettiSprites[id].angle + SPREAD / 2;
+	fire() {
+		return this.addConfettiParticles.apply(this, arguments);
+	}
+
+	tweenConfettiParticle(id, options) {
+		const minAngle = this.confettiSprites[id].angle - options.spread / 2;
+		const maxAngle = this.confettiSprites[id].angle + options.spread / 2;
 
 		const minVelocity = this.confettiSprites[id].velocity / 4;
 		const maxVelocity = this.confettiSprites[id].velocity;
@@ -308,11 +339,11 @@ class ConfettiCannon {
 		// Physics Props
 		const velocity = _.random(minVelocity, maxVelocity);
 		const angle = _.random(minAngle, maxAngle);
-		const gravity = GRAVITY;
-		const friction = _.random(0.1, 0.25);
+		const gravity = options.gravity;
+		const friction = options.friction || _.random(0.1, 0.25);
 		const d = 0;
 
-		TweenLite.to(this.confettiSprites[id], DECAY, {
+		TweenLite.to(this.confettiSprites[id], options.decay, {
 			physics2D: {
 				velocity,
 				angle,
