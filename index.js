@@ -26,6 +26,7 @@ class ConfettiCannon {
 
 		this.options = _.extend({
 			debug: false,
+			resize: true,
 			trigger: this.canvas,
 			forceCanvasSize: false,
 			// default fire options
@@ -73,7 +74,10 @@ class ConfettiCannon {
 		TweenLite.ticker.addEventListener('tick', this.render);
 
 		this.setCanvasSize();
-		if (this.options.trigger) this.setupListeners(this.options.trigger);
+		if (this.options.trigger)
+			this.setupListeners(this.options.trigger);
+		if (this.options.resize)
+			window.addEventListener('resize', this.setCanvasSize);
 	}
 
 	setupListeners(target) {
@@ -84,7 +88,6 @@ class ConfettiCannon {
 		target.addEventListener('touchstart', this.handleTouchstart);
 		target.addEventListener('touchend', this.handleMouseup);
 		target.addEventListener('touchmove', this.handleTouchmove);
-		target.addEventListener('resize', this.setCanvasSize);
 	}
 
 	setCanvasSize() {
@@ -111,7 +114,8 @@ class ConfettiCannon {
 	handleTouchstart(event) {
 		clearTimeout(this.timer);
 		event.preventDefault();
-		const x = event.touches[0].clientX * this.dpr;
+		//TODO: why is X DPI-adjustment not necessary for touch??
+		const x = event.touches[0].clientX //* this.dpr;
 		const y = event.touches[0].clientY * this.dpr;
 		this.vector[0] = {
 			x,
@@ -119,6 +123,8 @@ class ConfettiCannon {
 		};
 
 		this.drawVector = true;
+		//NOTE: mousedown implies mousemove, but not for touch
+		this.handleTouchmove(event);
 	}
 
 	handleMouseup(event) {
@@ -134,7 +140,8 @@ class ConfettiCannon {
 
 		const amount = length / 5 + 5;
 		const velocity = length * 10;
-		this.addConfettiParticles({amount, angle, velocity, x: x0, y: y0});
+		this.addConfettiParticles({
+			amount, angle, velocity, x: x0, y: y0, dpr: 1});
 	}
 
 	handleMousemove(event) {
@@ -149,7 +156,7 @@ class ConfettiCannon {
 
 	handleTouchmove(event) {
 		event.preventDefault();
-		const x = event.changedTouches[0].clientX * this.dpr;
+		const x = event.changedTouches[0].clientX //* this.dpr;
 		const y = event.changedTouches[0].clientY * this.dpr;
 		this.vector[1] = {
 			x,
@@ -179,6 +186,7 @@ class ConfettiCannon {
 			angle: 270,
 			amount: 100,
 			velocity: 2000,
+			dpr: this.dpr,
 			x: this.canvas.width/2,
 			y: this.canvas.height/2,
 			color: this.options.color,
@@ -186,6 +194,9 @@ class ConfettiCannon {
 			spread: this.options.spread,
 			gravity: this.options.gravity,
 		}, options);
+
+		options.x *= options.dpr;
+		options.y *= options.dpr;
 
 		let i = 0;
 		while (i < options.amount) {
