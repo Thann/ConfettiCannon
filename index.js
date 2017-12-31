@@ -187,8 +187,8 @@ class ConfettiCannon {
 			amount: 100,
 			velocity: 2000,
 			dpr: this.dpr,
-			x: this.canvas.width/2,
-			y: this.canvas.height/2,
+			x: this.canvas.width / this.dpr /2,
+			y: this.canvas.height/ this.dpr /2,
 			color: this.options.color,
 			decay: this.options.decay,
 			spread: this.options.spread,
@@ -253,7 +253,7 @@ class ConfettiCannon {
 		const velocity = _.random(minVelocity, maxVelocity);
 		const angle = _.random(minAngle, maxAngle);
 		const gravity = options.gravity;
-		const friction = options.friction || _.random(0.1, 0.25);
+		const friction = (options.friction || _.random(0.1, 0.25)) / this.dpr;
 		const d = 0;
 
 		TweenLite.to(this.confettiSprites[id], options.decay, {
