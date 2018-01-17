@@ -1,5 +1,14 @@
-var ConfettiCannon =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["ConfettiCannon"] = factory();
+	else
+		root["ConfettiCannon"] = factory();
+})(typeof self !== 'undefined' ? self : this, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -98,26 +107,36 @@ module.exports = g;
 "use strict";
 
 
-const TweenLite = __webpack_require__(2);
-const _ = __webpack_require__(3);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TweenLite = __webpack_require__(2);
+var _ = __webpack_require__(3);
 __webpack_require__(5);
 
 // utilities
 function getLength(x0, y0, x1, y1) {
 	// returns the length of a line segment
-	const x = x1 - x0;
-	const y = y1 - y0;
+	var x = x1 - x0;
+	var y = y1 - y0;
 	return Math.sqrt(x * x + y * y);
 }
 
 function getDegAngle(x0, y0, x1, y1) {
-	const y = y1 - y0;
-	const x = x1 - x0;
+	var y = y1 - y0;
+	var x = x1 - x0;
 	return Math.atan2(y, x) * (180 / Math.PI);
 }
 
-class ConfettiCannon {
-	constructor(canvas, options) {
+var ConfettiCannon = function () {
+	function ConfettiCannon(canvas, options) {
+		_classCallCheck(this, ConfettiCannon);
+
 		if (canvas.length) canvas = canvas[0];
 		if (!canvas) throw "must pass canvas";
 		this.canvas = canvas;
@@ -134,8 +153,8 @@ class ConfettiCannon {
 			color: {
 				red: [0, 255],
 				blue: [0, 255],
-				green: [0, 255],
-			},
+				green: [0, 255]
+			}
 		}, options);
 
 		// setup canvas
@@ -151,10 +170,10 @@ class ConfettiCannon {
 		this.drawVector = false;
 		this.vector = [{
 			x: window.innerWidth,
-			y: window.innerHeight * 1.25,
+			y: window.innerHeight * 1.25
 		}, {
 			x: window.innerWidth,
-			y: window.innerHeight * 2,
+			y: window.innerHeight * 2
 		}];
 
 		this.pointer = {};
@@ -172,281 +191,302 @@ class ConfettiCannon {
 		TweenLite.ticker.addEventListener('tick', this.render);
 
 		this.setCanvasSize();
-		if (this.options.trigger)
-			this.setupListeners(this.options.trigger);
-		if (this.options.resize)
-			window.addEventListener('resize', this.setCanvasSize);
+		if (this.options.trigger) this.setupListeners(this.options.trigger);
+		if (this.options.resize) window.addEventListener('resize', this.setCanvasSize);
 	}
 
-	setupListeners(target) {
-		// bind events
-		target.addEventListener('mousedown', this.handleMousedown);
-		target.addEventListener('mouseup', this.handleMouseup);
-		target.addEventListener('mousemove', this.handleMousemove);
-		target.addEventListener('touchstart', this.handleTouchstart);
-		target.addEventListener('touchend', this.handleMouseup);
-		target.addEventListener('touchmove', this.handleTouchmove);
-	}
-
-	setCanvasSize() {
-		this.canvas.width = window.innerWidth * this.dpr;
-		this.canvas.height = window.innerHeight * this.dpr;
-		if (!this.options.forceCanvasSize) {
-			this.canvas.style.width = window.innerWidth + 'px';
-			this.canvas.style.height = window.innerHeight + 'px';
+	_createClass(ConfettiCannon, [{
+		key: 'setupListeners',
+		value: function setupListeners(target) {
+			// bind events
+			target.addEventListener('mousedown', this.handleMousedown);
+			target.addEventListener('mouseup', this.handleMouseup);
+			target.addEventListener('mousemove', this.handleMousemove);
+			target.addEventListener('touchstart', this.handleTouchstart);
+			target.addEventListener('touchend', this.handleMouseup);
+			target.addEventListener('touchmove', this.handleTouchmove);
 		}
-	}
+	}, {
+		key: 'setCanvasSize',
+		value: function setCanvasSize() {
+			this.canvas.width = window.innerWidth * this.dpr;
+			this.canvas.height = window.innerHeight * this.dpr;
+			if (!this.options.forceCanvasSize) {
+				this.canvas.style.width = window.innerWidth + 'px';
+				this.canvas.style.height = window.innerHeight + 'px';
+			}
+		}
+	}, {
+		key: 'handleMousedown',
+		value: function handleMousedown(event) {
+			clearTimeout(this.timer);
+			var x = event.clientX * this.dpr;
+			var y = event.clientY * this.dpr;
 
-	handleMousedown(event) {
-		clearTimeout(this.timer);
-		const x = event.clientX * this.dpr;
-		const y = event.clientY * this.dpr;
+			this.vector[0] = {
+				x: x,
+				y: y
+			};
+			this.drawVector = true;
+		}
+	}, {
+		key: 'handleTouchstart',
+		value: function handleTouchstart(event) {
+			clearTimeout(this.timer);
+			event.preventDefault();
+			//TODO: why is X DPI-adjustment not necessary for touch??
+			var x = event.touches[0].clientX; //* this.dpr;
+			var y = event.touches[0].clientY * this.dpr;
+			this.vector[0] = {
+				x: x,
+				y: y
+			};
 
-		this.vector[0] = {
-			x,
-			y,
-		};
-		this.drawVector = true;
-	}
+			this.drawVector = true;
+			//NOTE: mousedown implies mousemove, but not for touch
+			this.handleTouchmove(event);
+		}
+	}, {
+		key: 'handleMouseup',
+		value: function handleMouseup(event) {
+			this.drawVector = false;
 
-	handleTouchstart(event) {
-		clearTimeout(this.timer);
-		event.preventDefault();
-		//TODO: why is X DPI-adjustment not necessary for touch??
-		const x = event.touches[0].clientX //* this.dpr;
-		const y = event.touches[0].clientY * this.dpr;
-		this.vector[0] = {
-			x,
-			y,
-		};
+			var x0 = this.vector[0].x;
+			var y0 = this.vector[0].y;
+			var x1 = this.vector[1].x;
+			var y1 = this.vector[1].y;
 
-		this.drawVector = true;
-		//NOTE: mousedown implies mousemove, but not for touch
-		this.handleTouchmove(event);
-	}
+			var length = getLength(x0, y0, x1, y1);
+			var angle = getDegAngle(x0, y0, x1, y1) + 180;
 
-	handleMouseup(event) {
-		this.drawVector = false;
+			var amount = length / 5 + 5;
+			var velocity = length * 10;
+			this.addConfettiParticles({
+				amount: amount, angle: angle, velocity: velocity, x: x0, y: y0, dpr: 1 });
+		}
+	}, {
+		key: 'handleMousemove',
+		value: function handleMousemove(event) {
+			var x = event.clientX * this.dpr;
+			var y = event.clientY * this.dpr;
+			this.vector[1] = {
+				x: x,
+				y: y
+			};
+			this.pointer = this.vector[1];
+		}
+	}, {
+		key: 'handleTouchmove',
+		value: function handleTouchmove(event) {
+			event.preventDefault();
+			var x = event.changedTouches[0].clientX; //* this.dpr;
+			var y = event.changedTouches[0].clientY * this.dpr;
+			this.vector[1] = {
+				x: x,
+				y: y
+			};
+			this.pointer = this.vector[1];
+		}
+	}, {
+		key: 'drawVectorLine',
+		value: function drawVectorLine() {
+			this.ctx.strokeStyle = 'pink';
+			this.ctx.lineWidth = 2 * this.dpr;
 
-		const x0 = this.vector[0].x;
-		const y0 = this.vector[0].y;
-		const x1 = this.vector[1].x;
-		const y1 = this.vector[1].y;
+			var x0 = this.vector[0].x;
+			var y0 = this.vector[0].y;
+			var x1 = this.vector[1].x;
+			var y1 = this.vector[1].y;
 
-		const length = getLength(x0, y0, x1, y1);
-		const angle = getDegAngle(x0, y0, x1, y1) + 180;
+			this.ctx.beginPath();
+			this.ctx.moveTo(x0, y0);
+			this.ctx.lineTo(x1, y1);
+			this.ctx.stroke();
+		}
 
-		const amount = length / 5 + 5;
-		const velocity = length * 10;
-		this.addConfettiParticles({
-			amount, angle, velocity, x: x0, y: y0, dpr: 1});
-	}
+		// color should be {red: [0,255], green: [0,255], blue: [0,255]} or a fn that returns one
 
-	handleMousemove(event) {
-		const x = event.clientX * this.dpr;
-		const y = event.clientY * this.dpr;
-		this.vector[1] = {
-			x,
-			y,
-		};
-		this.pointer = this.vector[1];
-	}
+	}, {
+		key: 'addConfettiParticles',
+		value: function addConfettiParticles(options) {
+			options = _.extend({
+				angle: 270,
+				amount: 100,
+				velocity: 2000,
+				dpr: this.dpr,
+				x: this.canvas.width / this.dpr / 2,
+				y: this.canvas.height / this.dpr / 2,
+				color: this.options.color,
+				decay: this.options.decay,
+				spread: this.options.spread,
+				gravity: this.options.gravity
+			}, options);
 
-	handleTouchmove(event) {
-		event.preventDefault();
-		const x = event.changedTouches[0].clientX //* this.dpr;
-		const y = event.changedTouches[0].clientY * this.dpr;
-		this.vector[1] = {
-			x,
-			y,
-		};
-		this.pointer = this.vector[1];
-	}
+			options.x *= options.dpr;
+			options.y *= options.dpr;
 
-	drawVectorLine() {
-		this.ctx.strokeStyle = 'pink';
-		this.ctx.lineWidth = 2 * this.dpr;
+			var i = 0;
+			while (i < options.amount) {
+				// sprite
+				var r = _.random(4, 6) * this.dpr;
+				var d = _.random(15, 25) * this.dpr;
 
-		const x0 = this.vector[0].x;
-		const y0 = this.vector[0].y;
-		const x1 = this.vector[1].x;
-		const y1 = this.vector[1].y;
+				if (this.options.debug) console.log("Adding Particle:", i, options);
+				var color = _.isFunction(options.color) ? options.color.apply() : options.color;
+				var cr = _.isArray(color.red) ? _.random.apply(_, _toConsumableArray(color.red)) : color.red;
+				var cb = _.isArray(color.blue) ? _.random.apply(_, _toConsumableArray(color.blue)) : color.blue;
+				var cg = _.isArray(color.green) ? _.random.apply(_, _toConsumableArray(color.green)) : color.green;
+				color = 'rgb(' + cr + ', ' + cg + ', ' + cb + ')';
 
-		this.ctx.beginPath();
-		this.ctx.moveTo(x0, y0);
-		this.ctx.lineTo(x1, y1);
-		this.ctx.stroke();
-	}
+				var tilt = _.random(10, -10);
+				var tiltAngleIncremental = _.random(0.07, 0.05);
+				var tiltAngle = 0;
 
-	// color should be {red: [0,255], green: [0,255], blue: [0,255]} or a fn that returns one
-	addConfettiParticles(options) {
-		options = _.extend({
-			angle: 270,
-			amount: 100,
-			velocity: 2000,
-			dpr: this.dpr,
-			x: this.canvas.width / this.dpr /2,
-			y: this.canvas.height/ this.dpr /2,
-			color: this.options.color,
-			decay: this.options.decay,
-			spread: this.options.spread,
-			gravity: this.options.gravity,
-		}, options);
-
-		options.x *= options.dpr;
-		options.y *= options.dpr;
-
-		let i = 0;
-		while (i < options.amount) {
-			// sprite
-			const r = _.random(4, 6) * this.dpr;
-			const d = _.random(15, 25) * this.dpr;
-
-			if (this.options.debug) console.log("Adding Particle:", i, options);
-			let color = _.isFunction(options.color)? options.color.apply() : options.color;
-			const cr = _.isArray(color.red)? _.random(...color.red) : color.red;
-			const cb = _.isArray(color.blue)? _.random(...color.blue) : color.blue;
-			const cg = _.isArray(color.green)? _.random(...color.green) : color.green;
-			color = `rgb(${cr}, ${cg}, ${cb})`;
-
-			const tilt = _.random(10, -10);
-			const tiltAngleIncremental = _.random(0.07, 0.05);
-			const tiltAngle = 0;
-
-			const id = _.uniqueId();
-			const sprite = {
-				[id]: {
-					r,
-					d,
-					tilt,
-					color,
-					tiltAngle,
-					tiltAngleIncremental,
+				var id = _.uniqueId();
+				var sprite = _defineProperty({}, id, {
+					r: r,
+					d: d,
+					tilt: tilt,
+					color: color,
+					tiltAngle: tiltAngle,
+					tiltAngleIncremental: tiltAngleIncremental,
 					x: options.x,
 					y: options.y,
 					angle: options.angle,
-					velocity: options.velocity,
-				},
-			};
+					velocity: options.velocity
+				});
 
-			Object.assign(this.confettiSprites, sprite);
-			this.confettiSpriteIds.push(id);
-			this.tweenConfettiParticle(id, options);
-			i++;
+				Object.assign(this.confettiSprites, sprite);
+				this.confettiSpriteIds.push(id);
+				this.tweenConfettiParticle(id, options);
+				i++;
+			}
 		}
-	}
+	}, {
+		key: 'fire',
+		value: function fire() {
+			return this.addConfettiParticles.apply(this, arguments);
+		}
+	}, {
+		key: 'tweenConfettiParticle',
+		value: function tweenConfettiParticle(id, options) {
+			var _this = this;
 
-	fire() {
-		return this.addConfettiParticles.apply(this, arguments);
-	}
+			var minAngle = this.confettiSprites[id].angle - options.spread / 2;
+			var maxAngle = this.confettiSprites[id].angle + options.spread / 2;
 
-	tweenConfettiParticle(id, options) {
-		const minAngle = this.confettiSprites[id].angle - options.spread / 2;
-		const maxAngle = this.confettiSprites[id].angle + options.spread / 2;
+			var minVelocity = this.confettiSprites[id].velocity / 4;
+			var maxVelocity = this.confettiSprites[id].velocity;
 
-		const minVelocity = this.confettiSprites[id].velocity / 4;
-		const maxVelocity = this.confettiSprites[id].velocity;
+			// Physics Props
+			var velocity = _.random(minVelocity, maxVelocity);
+			var angle = _.random(minAngle, maxAngle);
+			var gravity = options.gravity;
+			var friction = (options.friction || _.random(0.1, 0.25)) / this.dpr;
+			var d = 0;
 
-		// Physics Props
-		const velocity = _.random(minVelocity, maxVelocity);
-		const angle = _.random(minAngle, maxAngle);
-		const gravity = options.gravity;
-		const friction = (options.friction || _.random(0.1, 0.25)) / this.dpr;
-		const d = 0;
+			TweenLite.to(this.confettiSprites[id], options.decay, {
+				physics2D: {
+					velocity: velocity,
+					angle: angle,
+					gravity: gravity,
+					friction: friction
+				},
+				d: d,
+				ease: TweenLite.Power4.easeIn,
+				onComplete: function onComplete() {
+					// remove confetti sprite and id
+					_.pull(_this.confettiSpriteIds, id);
+					delete _this.confettiSprites[id];
+				}
+			});
+		}
+	}, {
+		key: 'updateConfettiParticle',
+		value: function updateConfettiParticle(id) {
+			var sprite = this.confettiSprites[id];
 
-		TweenLite.to(this.confettiSprites[id], options.decay, {
-			physics2D: {
-				velocity,
-				angle,
-				gravity,
-				friction,
-			},
-			d,
-			ease: TweenLite.Power4.easeIn,
-			onComplete: () => {
-				// remove confetti sprite and id
-				_.pull(this.confettiSpriteIds, id);
-				delete this.confettiSprites[id];
-			},
-		});
-	}
+			var tiltAngle = 0.0005 * sprite.d;
 
-	updateConfettiParticle(id) {
-		const sprite = this.confettiSprites[id];
+			sprite.angle += 0.01;
+			sprite.tiltAngle += tiltAngle;
+			sprite.tiltAngle += sprite.tiltAngleIncremental;
+			sprite.tilt = Math.sin(sprite.tiltAngle - sprite.r / 2) * sprite.r * 2;
+			sprite.y += Math.sin(sprite.angle + sprite.r / 2) * 2;
+			sprite.x += Math.cos(sprite.angle) / 2;
+		}
+	}, {
+		key: 'drawConfetti',
+		value: function drawConfetti() {
+			var _this2 = this;
 
-		const tiltAngle = 0.0005 * sprite.d;
+			this.confettiSpriteIds.map(function (id) {
+				var sprite = _this2.confettiSprites[id];
 
-		sprite.angle += 0.01;
-		sprite.tiltAngle += tiltAngle;
-		sprite.tiltAngle += sprite.tiltAngleIncremental;
-		sprite.tilt = (Math.sin(sprite.tiltAngle - (sprite.r / 2))) * sprite.r * 2;
-		sprite.y += Math.sin(sprite.angle + sprite.r / 2) * 2;
-		sprite.x += Math.cos(sprite.angle) / 2;
-	}
+				_this2.ctx.beginPath();
+				_this2.ctx.lineWidth = sprite.d / 2;
+				_this2.ctx.strokeStyle = sprite.color;
+				_this2.ctx.moveTo(sprite.x + sprite.tilt + sprite.r, sprite.y);
+				_this2.ctx.lineTo(sprite.x + sprite.tilt, sprite.y + sprite.tilt + sprite.r);
+				_this2.ctx.stroke();
 
-	drawConfetti() {
-		this.confettiSpriteIds.map(id => {
-			const sprite = this.confettiSprites[id];
+				_this2.updateConfettiParticle(id);
+			});
+		}
+	}, {
+		key: 'drawPointer',
+		value: function drawPointer() {
+			var centerX = this.pointer.x;
+			var centerY = this.pointer.y;
+			var radius = 15 * this.dpr;
 
 			this.ctx.beginPath();
-			this.ctx.lineWidth = sprite.d / 2;
-			this.ctx.strokeStyle = sprite.color;
-			this.ctx.moveTo(sprite.x + sprite.tilt + sprite.r, sprite.y);
-			this.ctx.lineTo(sprite.x + sprite.tilt, sprite.y + sprite.tilt + sprite.r);
+			this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+			this.ctx.fillStyle = 'transparent';
+			this.ctx.fill();
+			this.ctx.lineWidth = 2 * this.dpr;
+			this.ctx.strokeStyle = '#ffffff';
 			this.ctx.stroke();
+		}
+	}, {
+		key: 'drawPower',
+		value: function drawPower() {
+			var x0 = this.vector[0].x;
+			var y0 = this.vector[0].y;
+			var x1 = this.vector[1].x;
+			var y1 = this.vector[1].y;
 
-			this.updateConfettiParticle(id);
-		});
-	}
+			var length = getLength(x0, y0, x1, y1);
+			var centerX = x0;
+			var centerY = y0;
+			var radius = 1 * this.dpr * length / 20;
 
-	drawPointer() {
-		const centerX = this.pointer.x;
-		const centerY = this.pointer.y;
-		const radius = 15 * this.dpr;
+			this.ctx.beginPath();
+			this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+			this.ctx.fillStyle = 'transparent';
+			this.ctx.fill();
+			this.ctx.lineWidth = 2 * this.dpr;
+			this.ctx.strokeStyle = '#333333';
+			this.ctx.stroke();
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-		this.ctx.beginPath();
-		this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-		this.ctx.fillStyle = 'transparent';
-		this.ctx.fill();
-		this.ctx.lineWidth = 2 * this.dpr;
-		this.ctx.strokeStyle = '#ffffff';
-		this.ctx.stroke();
-	}
+			// only draw the vector when the drawVector flag is on
+			this.drawVector && this.drawVectorLine();
+			this.drawVector && this.drawPower();
 
-	drawPower() {
-		const x0 = this.vector[0].x;
-		const y0 = this.vector[0].y;
-		const x1 = this.vector[1].x;
-		const y1 = this.vector[1].y;
+			this.drawPointer();
+			this.drawConfetti();
+		}
+	}]);
 
-		const length = getLength(x0, y0, x1, y1);
-		const centerX = x0;
-		const centerY = y0;
-		const radius = 1 * this.dpr * length / 20;
-
-		this.ctx.beginPath();
-		this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-		this.ctx.fillStyle = 'transparent';
-		this.ctx.fill();
-		this.ctx.lineWidth = 2 * this.dpr;
-		this.ctx.strokeStyle = '#333333';
-		this.ctx.stroke();
-	}
-
-	render() {
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-		// only draw the vector when the drawVector flag is on
-		this.drawVector && this.drawVectorLine();
-		this.drawVector && this.drawPower();
-
-		this.drawPointer();
-		this.drawConfetti();
-	}
-}
+	return ConfettiCannon;
+}();
 
 module.exports = ConfettiCannon;
-
 
 /***/ }),
 /* 2 */
@@ -19521,7 +19561,10 @@ module.exports = function(module) {
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {/*!
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+/*!
  * VERSION: 0.2.0
  * DATE: 2016-07-12
  * UPDATES AND DOCS AT: http://greensock.com
@@ -19533,74 +19576,89 @@ module.exports = function(module) {
  *
  * @author: Jack Doyle, jack@greensock.com
  */
-var _gsScope = "undefined" != typeof module && module.exports && "undefined" != typeof global ? global : this || window;
+var _gsScope = "undefined" != typeof module && module.exports && "undefined" != typeof global ? global : undefined || window;
 
-(_gsScope._gsQueue || (_gsScope._gsQueue = [])).push(function() {
+(_gsScope._gsQueue || (_gsScope._gsQueue = [])).push(function () {
     "use strict";
-    var t = Math.PI / 180, e = function(t, e, i, n, r) {
-        this.p = e, this.f = "function" == typeof t[e], this.start = this.value = this.f ? t[e.indexOf("set") || "function" != typeof t["get" + e.substr(3)] ? e : "get" + e.substr(3)]() : parseFloat(t[e]),
-        this.velocity = i || 0, this.v = this.velocity / r, n || 0 === n ? (this.acceleration = n,
-        this.a = this.acceleration / (r * r)) : this.acceleration = this.a = 0;
-    }, i = "codepen", n = "Physics2DPlugin", r = String.fromCharCode(103, 114, 101, 101, 110, 115, 111, 99, 107, 46, 99, 111, 109), s = String.fromCharCode(47, 114, 101, 113, 117, 105, 114, 101, 115, 45, 109, 101, 109, 98, 101, 114, 115, 104, 105, 112, 47), o = function(t) {
+
+    var t = Math.PI / 180,
+        e = function e(t, _e, i, n, r) {
+        this.p = _e, this.f = "function" == typeof t[_e], this.start = this.value = this.f ? t[_e.indexOf("set") || "function" != typeof t["get" + _e.substr(3)] ? _e : "get" + _e.substr(3)]() : parseFloat(t[_e]), this.velocity = i || 0, this.v = this.velocity / r, n || 0 === n ? (this.acceleration = n, this.a = this.acceleration / (r * r)) : this.acceleration = this.a = 0;
+    },
+        i = "codepen",
+        n = "Physics2DPlugin",
+        r = String.fromCharCode(103, 114, 101, 101, 110, 115, 111, 99, 107, 46, 99, 111, 109),
+        s = String.fromCharCode(47, 114, 101, 113, 117, 105, 114, 101, 115, 45, 109, 101, 109, 98, 101, 114, 115, 104, 105, 112, 47),
+        o = function (t) {
         //for (var e = -1 !== (window ? window.location.href : "").indexOf(String.fromCharCode(103, 114, 101, 101, 110, 115, 111, 99, 107)) && -1 !== t.indexOf(String.fromCharCode(108, 111, 99, 97, 108, 104, 111, 115, 116)), i = [ r, String.fromCharCode(99, 111, 100, 101, 112, 101, 110, 46, 105, 111), String.fromCharCode(99, 111, 100, 101, 112, 101, 110, 46, 100, 101, 118), String.fromCharCode(99, 115, 115, 45, 116, 114, 105, 99, 107, 115, 46, 99, 111, 109), String.fromCharCode(99, 100, 112, 110, 46, 105, 111), String.fromCharCode(103, 97, 110, 110, 111, 110, 46, 116, 118), String.fromCharCode(99, 111, 100, 101, 99, 97, 110, 121, 111, 110, 46, 110, 101, 116), String.fromCharCode(116, 104, 101, 109, 101, 102, 111, 114, 101, 115, 116, 46, 110, 101, 116), String.fromCharCode(99, 101, 114, 101, 98, 114, 97, 120, 46, 99, 111, 46, 117, 107), String.fromCharCode(116, 121, 109, 112, 97, 110, 117, 115, 46, 110, 101, 116), String.fromCharCode(116, 119, 101, 101, 110, 109, 97, 120, 46, 99, 111, 109), String.fromCharCode(116, 119, 101, 101, 110, 108, 105, 116, 101, 46, 99, 111, 109), String.fromCharCode(112, 108, 110, 107, 114, 46, 99, 111), String.fromCharCode(104, 111, 116, 106, 97, 114, 46, 99, 111, 109), String.fromCharCode(119, 101, 98, 112, 97, 99, 107, 98, 105, 110, 46, 99, 111, 109), String.fromCharCode(97, 114, 99, 104, 105, 118, 101, 46, 111, 114, 103), String.fromCharCode(106, 115, 102, 105, 100, 100, 108, 101, 46, 110, 101, 116) ], s = i.length; --s > -1; ) console.log("WWWW", t, i, s); return true;//if (-1 !== t.indexOf(i[s])) return !0;
         //return e && window && window.console && console.log(String.fromCharCode(87, 65, 82, 78, 73, 78, 71, 58, 32, 97, 32, 115, 112, 101, 99, 105, 97, 108, 32, 118, 101, 114, 115, 105, 111, 110, 32, 111, 102, 32) + n + String.fromCharCode(32, 105, 115, 32, 114, 117, 110, 110, 105, 110, 103, 32, 108, 111, 99, 97, 108, 108, 121, 44, 32, 98, 117, 116, 32, 105, 116, 32, 119, 105, 108, 108, 32, 110, 111, 116, 32, 119, 111, 114, 107, 32, 111, 110, 32, 97, 32, 108, 105, 118, 101, 32, 100, 111, 109, 97, 105, 110, 32, 98, 101, 99, 97, 117, 115, 101, 32, 105, 116, 32, 105, 115, 32, 97, 32, 109, 101, 109, 98, 101, 114, 115, 104, 105, 112, 32, 98, 101, 110, 101, 102, 105, 116, 32, 111, 102, 32, 67, 108, 117, 98, 32, 71, 114, 101, 101, 110, 83, 111, 99, 107, 46, 32, 80, 108, 101, 97, 115, 101, 32, 115, 105, 103, 110, 32, 117, 112, 32, 97, 116, 32, 104, 116, 116, 112, 58, 47, 47, 103, 114, 101, 101, 110, 115, 111, 99, 107, 46, 99, 111, 109, 47, 99, 108, 117, 98, 47, 32, 97, 110, 100, 32, 116, 104, 101, 110, 32, 100, 111, 119, 110, 108, 111, 97, 100, 32, 116, 104, 101, 32, 39, 114, 101, 97, 108, 39, 32, 118, 101, 114, 115, 105, 111, 110, 32, 102, 114, 111, 109, 32, 121, 111, 117, 114, 32, 71, 114, 101, 101, 110, 83, 111, 99, 107, 32, 97, 99, 99, 111, 117, 110, 116, 32, 119, 104, 105, 99, 104, 32, 104, 97, 115, 32, 110, 111, 32, 115, 117, 99, 104, 32, 108, 105, 109, 105, 116, 97, 116, 105, 111, 110, 115, 46, 32, 84, 104, 101, 32, 102, 105, 108, 101, 32, 121, 111, 117, 39, 114, 101, 32, 117, 115, 105, 110, 103, 32, 119, 97, 115, 32, 108, 105, 107, 101, 108, 121, 32, 100, 111, 119, 110, 108, 111, 97, 100, 101, 100, 32, 102, 114, 111, 109, 32, 101, 108, 115, 101, 119, 104, 101, 114, 101, 32, 111, 110, 32, 116, 104, 101, 32, 119, 101, 98, 32, 97, 110, 100, 32, 105, 115, 32, 114, 101, 115, 116, 114, 105, 99, 116, 101, 100, 32, 116, 111, 32, 108, 111, 99, 97, 108, 32, 117, 115, 101, 32, 111, 114, 32, 111, 110, 32, 115, 105, 116, 101, 115, 32, 108, 105, 107, 101, 32, 99, 111, 100, 101, 112, 101, 110, 46, 105, 111, 46)),
         //e;
         return true;
-    }(window ? window.location.host : ""), a = Math.random(), h = _gsScope._gsDefine.globals, l = h.com.greensock.core.Animation._rootFramesTimeline, c = _gsScope._gsDefine.plugin({
+    }(window ? window.location.host : ""),
+        a = Math.random(),
+        h = _gsScope._gsDefine.globals,
+        l = h.com.greensock.core.Animation._rootFramesTimeline,
+        c = _gsScope._gsDefine.plugin({
         propName: "physics2D",
         version: "0.2.0",
         API: 2,
-        init: function(a, h, c, d) {
+        init: function init(a, h, c, d) {
             //if ("function" == typeof h && (h = h(d, a)), !o) return window.location.href = "http://" + r + s + "?plugin=" + n + "&source=" + i,
             //!1;
             //("function" == typeof h && (h = h(d, a)), !o)
-            this._target = a, this._tween = c, this._runBackwards = c.vars.runBackwards === !0,
-            this._step = 0;
-            for (var g, u = c._timeline, f = +h.angle || 0, p = +h.velocity || 0, _ = +h.acceleration || 0, m = h.xProp || "x", C = h.yProp || "y", v = h.accelerationAngle || 0 === h.accelerationAngle ? +h.accelerationAngle : f; u._timeline; ) u = u._timeline;
-            return this._stepsPerTimeUnit = g = u === l ? 1 : 30, h.gravity && (_ = +h.gravity,
-            v = 90), f *= t, v *= t, this._friction = 1 - +(h.friction || 0), this._overwriteProps.push(m),
-            this._overwriteProps.push(C), this._x = new e(a, m, Math.cos(f) * p, Math.cos(v) * _, g),
-            this._y = new e(a, C, Math.sin(f) * p, Math.sin(v) * _, g), this._skipX = this._skipY = !1,
-            o;
+            this._target = a, this._tween = c, this._runBackwards = c.vars.runBackwards === !0, this._step = 0;
+            for (var g, u = c._timeline, f = +h.angle || 0, p = +h.velocity || 0, _ = +h.acceleration || 0, m = h.xProp || "x", C = h.yProp || "y", v = h.accelerationAngle || 0 === h.accelerationAngle ? +h.accelerationAngle : f; u._timeline;) {
+                u = u._timeline;
+            }return this._stepsPerTimeUnit = g = u === l ? 1 : 30, h.gravity && (_ = +h.gravity, v = 90), f *= t, v *= t, this._friction = 1 - +(h.friction || 0), this._overwriteProps.push(m), this._overwriteProps.push(C), this._x = new e(a, m, Math.cos(f) * p, Math.cos(v) * _, g), this._y = new e(a, C, Math.sin(f) * p, Math.sin(v) * _, g), this._skipX = this._skipY = !1, o;
         },
-        set: function() {
-            var t, e, i, n, r, s, o = this._tween._time, a = this._x, h = this._y;
-            if (this._runBackwards === !0 && (o = this._tween._duration - o), 1 === this._friction) i = o * o * .5,
-            t = a.start + (a.velocity * o + a.acceleration * i), e = h.start + (h.velocity * o + h.acceleration * i); else {
-                if (o *= this._stepsPerTimeUnit, n = s = (0 | o) - this._step, r = o % 1, 0 > s) for (s = -s; --s > -1; ) a.value -= a.v,
-                h.value -= h.v, a.v /= this._friction, h.v /= this._friction, a.v -= a.a, h.v -= h.a; else for (;--s > -1; ) a.v += a.a,
-                h.v += h.a, a.v *= this._friction, h.v *= this._friction, a.value += a.v, h.value += h.v;
-                t = a.value + a.v * r, e = h.value + h.v * r, this._step += n;
+        set: function set() {
+            var t,
+                e,
+                i,
+                n,
+                r,
+                s,
+                o = this._tween._time,
+                a = this._x,
+                h = this._y;
+            if (this._runBackwards === !0 && (o = this._tween._duration - o), 1 === this._friction) i = o * o * .5, t = a.start + (a.velocity * o + a.acceleration * i), e = h.start + (h.velocity * o + h.acceleration * i);else {
+                if (o *= this._stepsPerTimeUnit, n = s = (0 | o) - this._step, r = o % 1, 0 > s) for (s = -s; --s > -1;) {
+                    a.value -= a.v, h.value -= h.v, a.v /= this._friction, h.v /= this._friction, a.v -= a.a, h.v -= h.a;
+                } else for (; --s > -1;) {
+                    a.v += a.a, h.v += h.a, a.v *= this._friction, h.v *= this._friction, a.value += a.v, h.value += h.v;
+                }t = a.value + a.v * r, e = h.value + h.v * r, this._step += n;
             }
-            this._skipX || (a.m && (t = a.m(t, this._target)), a.f ? this._target[a.p](t) : this._target[a.p] = t),
-            this._skipY || (h.m && (e = h.m(e, this._target)), h.f ? this._target[h.p](e) : this._target[h.p] = e);
+            this._skipX || (a.m && (t = a.m(t, this._target)), a.f ? this._target[a.p](t) : this._target[a.p] = t), this._skipY || (h.m && (e = h.m(e, this._target)), h.f ? this._target[h.p](e) : this._target[h.p] = e);
         }
-    }), d = c.prototype;
-    d._kill = function(t) {
-        return null != t[this._x.p] && (this._skipX = !0), null != t[this._y.p] && (this._skipY = !0),
-        this._super._kill.call(this, t);
-    }, d._mod = function(t) {
+    }),
+        d = c.prototype;
+    d._kill = function (t) {
+        return null != t[this._x.p] && (this._skipX = !0), null != t[this._y.p] && (this._skipY = !0), this._super._kill.call(this, t);
+    }, d._mod = function (t) {
         var e = t[this._x.p] || t.physics2D;
-        e && "function" == typeof e && (this._x.m = e), e = t[this._y.p] || t.physics2D,
-        e && "function" == typeof e && (this._y.m = e);
-    }, c._autoCSS = !0, c._cssRegister = function() {
+        e && "function" == typeof e && (this._x.m = e), e = t[this._y.p] || t.physics2D, e && "function" == typeof e && (this._y.m = e);
+    }, c._autoCSS = !0, c._cssRegister = function () {
         var t = h.CSSPlugin;
         if (t) {
-            var e = t._internals, i = e._parseToProxy, n = e._setPluginRatio, r = e.CSSPropTween;
+            var e = t._internals,
+                i = e._parseToProxy,
+                n = e._setPluginRatio,
+                r = e.CSSPropTween;
             e._registerComplexSpecialProp("physics2D", {
-                parser: function(t, e, s, o, h, l) {
+                parser: function parser(t, e, s, o, h, l) {
                     l = new c();
-                    var d, g = e.xProp || "x", u = e.yProp || "y", f = {};
-                    return f[g] = f[u] = a++, d = i(t, f, o, h, l), h = new r(t, "physics2D", 0, 0, d.pt, 2),
-                    h.data = d, h.plugin = l, h.setRatio = n, l._onInitTween(d.proxy, e, o._tween),
-                    h;
+                    var d,
+                        g = e.xProp || "x",
+                        u = e.yProp || "y",
+                        f = {};
+                    return f[g] = f[u] = a++, d = i(t, f, o, h, l), h = new r(t, "physics2D", 0, 0, d.pt, 2), h.data = d, h.plugin = l, h.setRatio = n, l._onInitTween(d.proxy, e, o._tween), h;
                 }
             });
         }
     };
 }), _gsScope._gsDefine && _gsScope._gsQueue.pop()();
-
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ })
 /******/ ]);
+});
